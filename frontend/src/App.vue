@@ -5,6 +5,7 @@
 				<h1 class="logo">VibeNotes</h1>
 				<div class="nav-links">
 					<router-link to="/dashboard" class="nav-link">Dashboard</router-link>
+					<router-link to="/notes" class="nav-link">My Notes</router-link>
 					<router-link to="/users" class="nav-link">Users</router-link>
 					<router-link to="/profile" class="nav-link">Profile</router-link>
 					<span class="username">{{ currentUser }}</span>

@@ -4,7 +4,23 @@
 			<div class="welcome-card">
 				<h1 class="welcome-title">Welcome, {{ username }}! 🎉</h1>
 				<p class="welcome-message">You have successfully logged into VibeNotes!</p>
-				<p class="info-message">Your note-taking features will appear here soon.</p>
+				<div class="quick-actions">
+					<router-link to="/notes" class="action-card">
+						<span class="action-icon">📝</span>
+						<h3>My Notes</h3>
+						<p>Create and manage your notes</p>
+					</router-link>
+					<router-link to="/users" class="action-card">
+						<span class="action-icon">👥</span>
+						<h3>Community</h3>
+						<p>View other members</p>
+					</router-link>
+					<router-link to="/profile" class="action-card">
+						<span class="action-icon">⚙️</span>
+						<h3>Profile</h3>
+						<p>Edit your profile</p>
+					</router-link>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -53,9 +69,41 @@ export default {
 	margin-bottom: 1rem;
 }
 
-.info-message {
-	color: #666;
-	font-size: 1rem;
+.quick-actions {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 2rem;
+	margin-top: 3rem;
+}
+
+.action-card {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	padding: 2rem;
+	border-radius: 12px;
+	text-decoration: none;
+	transition: all 0.3s;
+	text-align: center;
+}
+
+.action-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+}
+
+.action-icon {
+	font-size: 3rem;
+	display: block;
+	margin-bottom: 1rem;
+}
+
+.action-card h3 {
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.action-card p {
+	opacity: 0.9;
 }
 </style>
 

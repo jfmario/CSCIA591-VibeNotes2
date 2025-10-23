@@ -4,6 +4,9 @@ import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Profile from '../views/Profile.vue'
 import Users from '../views/Users.vue'
+import Notes from '../views/Notes.vue'
+import NoteDetail from '../views/NoteDetail.vue'
+import CreateNote from '../views/CreateNote.vue'
 
 const routes = [
 	{
@@ -36,6 +39,24 @@ const routes = [
 		path: '/users',
 		name: 'Users',
 		component: Users,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/notes',
+		name: 'Notes',
+		component: Notes,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/notes/new',
+		name: 'CreateNote',
+		component: CreateNote,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/notes/:id',
+		name: 'NoteDetail',
+		component: NoteDetail,
 		meta: { requiresAuth: true }
 	}
 ]

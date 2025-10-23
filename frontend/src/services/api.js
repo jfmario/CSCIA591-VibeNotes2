@@ -58,6 +58,23 @@ export default {
 				'Content-Type': 'multipart/form-data'
 			}
 		})
+	},
+
+	// Note endpoints
+	createNote(title, content) {
+		return api.post('/notes', { title, content })
+	},
+	getUserNotes() {
+		return api.get('/notes')
+	},
+	getNoteById(id) {
+		return api.get(`/notes/${id}`)
+	},
+	updateNote(id, title, content) {
+		return api.put(`/notes/${id}`, { title, content })
+	},
+	deleteNote(id) {
+		return api.delete(`/notes/${id}`)
 	}
 }
 
