@@ -7,6 +7,7 @@ import Users from '../views/Users.vue'
 import Notes from '../views/Notes.vue'
 import NoteDetail from '../views/NoteDetail.vue'
 import CreateNote from '../views/CreateNote.vue'
+import UserProfile from '../views/UserProfile.vue'
 
 const routes = [
 	{
@@ -57,6 +58,12 @@ const routes = [
 		path: '/notes/:id',
 		name: 'NoteDetail',
 		component: NoteDetail,
+		meta: { requiresAuth: true }
+	},
+	{
+		path: '/user/:userId/:username',
+		name: 'UserProfile',
+		component: UserProfile,
 		meta: { requiresAuth: true }
 	}
 ]

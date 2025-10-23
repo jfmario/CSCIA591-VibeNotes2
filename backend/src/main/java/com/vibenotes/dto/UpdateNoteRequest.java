@@ -9,6 +9,8 @@ public class UpdateNoteRequest {
 
 	private String content;
 
+	private Boolean isPublic;
+
 	public UpdateNoteRequest() {
 	}
 
@@ -26,6 +28,14 @@ public class UpdateNoteRequest {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }

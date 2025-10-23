@@ -61,8 +61,8 @@ export default {
 	},
 
 	// Note endpoints
-	createNote(title, content) {
-		return api.post('/notes', { title, content })
+	createNote(title, content, isPublic) {
+		return api.post('/notes', { title, content, isPublic })
 	},
 	getUserNotes() {
 		return api.get('/notes')
@@ -70,11 +70,14 @@ export default {
 	getNoteById(id) {
 		return api.get(`/notes/${id}`)
 	},
-	updateNote(id, title, content) {
-		return api.put(`/notes/${id}`, { title, content })
+	updateNote(id, title, content, isPublic) {
+		return api.put(`/notes/${id}`, { title, content, isPublic })
 	},
 	deleteNote(id) {
 		return api.delete(`/notes/${id}`)
+	},
+	getPublicNotesByUsername(username) {
+		return api.get(`/public/users/${username}/notes`)
 	},
 
 	// Note attachment endpoints

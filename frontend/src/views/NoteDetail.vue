@@ -69,6 +69,13 @@
 						></textarea>
 					</div>
 
+					<div class="form-group">
+						<label class="checkbox-label">
+							<input type="checkbox" v-model="editedNote.isPublic" class="checkbox-input" />
+							<span class="checkbox-text">🌐 Make this note public (visible on your profile)</span>
+						</label>
+					</div>
+
 					<div v-if="updateError" class="error-message">{{ updateError }}</div>
 
 					<div class="button-group">
@@ -95,7 +102,8 @@ export default {
 			note: null,
 			editedNote: {
 				title: '',
-				content: ''
+				content: '',
+				isPublic: false
 			},
 			loading: true,
 			error: '',
@@ -115,7 +123,8 @@ export default {
 				this.note = response.data
 				this.editedNote = {
 					title: this.note.title,
-					content: this.note.content
+					content: this.note.content,
+					isPublic: this.note.isPublic || false
 				}
 			} catch (error) {
 				this.error = 'Failed to load note'
@@ -131,7 +140,8 @@ export default {
 			this.isEditing = false
 			this.editedNote = {
 				title: this.note.title,
-				content: this.note.content
+				content: this.note.content,
+				isPublic: this.note.isPublic || false
 			}
 			this.updateError = ''
 		},
@@ -143,7 +153,8 @@ export default {
 				const response = await api.updateNote(
 					this.$route.params.id,
 					this.editedNote.title,
-					this.editedNote.content
+					this.editedNote.content,
+					this.editedNote.isPublic
 				)
 				this.note = response.data
 				this.isEditing = false
@@ -499,6 +510,34 @@ export default {
 
 .btn-delete-attachment:hover {
 	background: #ff5252;
+}
+
+.checkbox-label {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	cursor: pointer;
+	padding: 1rem;
+	background: #f8f9fa;
+	border-radius: 8px;
+	border: 2px solid #e0e0e0;
+	transition: all 0.3s;
+}
+
+.checkbox-label:hover {
+	border-color: #667eea;
+	background: #f0f4ff;
+}
+
+.checkbox-input {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.checkbox-text {
+	color: #333;
+	font-weight: 500;
 }
 
 @media (max-width: 768px) {

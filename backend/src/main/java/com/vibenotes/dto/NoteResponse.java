@@ -11,18 +11,20 @@ public class NoteResponse {
 	private String username;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	private Boolean isPublic;
 	private List<AttachmentResponse> attachments;
 
 	public NoteResponse() {
 	}
 
-	public NoteResponse(Long id, String title, String content, String username, LocalDateTime createdAt, LocalDateTime updatedAt, List<AttachmentResponse> attachments) {
+	public NoteResponse(Long id, String title, String content, String username, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isPublic, List<AttachmentResponse> attachments) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
 		this.username = username;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.isPublic = isPublic;
 		this.attachments = attachments;
 	}
 
@@ -72,6 +74,14 @@ public class NoteResponse {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 	public List<AttachmentResponse> getAttachments() {

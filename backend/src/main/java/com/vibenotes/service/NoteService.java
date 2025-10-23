@@ -36,6 +36,7 @@ public class NoteService {
 		Note note = new Note();
 		note.setTitle(request.getTitle());
 		note.setContent(request.getContent());
+		note.setIsPublic(request.getIsPublic() != null ? request.getIsPublic() : false);
 		note.setUser(user);
 
 		Note savedNote = noteRepository.save(note);
@@ -64,6 +65,9 @@ public class NoteService {
 		if (request.getContent() != null) {
 			note.setContent(request.getContent());
 		}
+		if (request.getIsPublic() != null) {
+			note.setIsPublic(request.getIsPublic());
+		}
 
 		Note updatedNote = noteRepository.save(note);
 		return mapToNoteResponse(updatedNote);
@@ -73,6 +77,12 @@ public class NoteService {
 		Note note = noteRepository.findByIdAndUserUsername(id, username)
 				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
 		noteRepository.delete(note);
+	}
+
+	public List<NoteResponse> getPublicNotesByUsername(String username) {
+		return noteRepository.findByUserUsernameAndIsPublicTrueOrderByUpdatedAtDesc(username).stream()
+				.map(this::mapToNoteResponse)
+				.collect(Collectors.toList());
 	}
 
 	private NoteResponse mapToNoteResponse(Note note) {
@@ -88,6 +98,7 @@ public class NoteService {
 				note.getUser().getUsername(),
 				note.getCreatedAt(),
 				note.getUpdatedAt(),
+				note.getIsPublic(),
 				attachmentResponses
 		);
 	}

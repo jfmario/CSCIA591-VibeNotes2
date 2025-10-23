@@ -12,6 +12,8 @@ public class CreateNoteRequest {
 	@NotBlank(message = "Content is required")
 	private String content;
 
+	private Boolean isPublic = false;
+
 	public CreateNoteRequest() {
 	}
 
@@ -29,6 +31,14 @@ public class CreateNoteRequest {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public Boolean getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
 	}
 
 }

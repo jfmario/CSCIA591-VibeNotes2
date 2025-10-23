@@ -58,6 +58,13 @@
 						</div>
 					</div>
 
+					<div class="form-group">
+						<label class="checkbox-label">
+							<input type="checkbox" v-model="note.isPublic" class="checkbox-input" />
+							<span class="checkbox-text">🌐 Make this note public (visible on your profile)</span>
+						</label>
+					</div>
+
 					<div v-if="error" class="error-message">{{ error }}</div>
 
 					<div class="button-group">
@@ -83,7 +90,8 @@ export default {
 		return {
 			note: {
 				title: '',
-				content: ''
+				content: '',
+				isPublic: false
 			},
 			selectedFiles: [],
 			saving: false,
@@ -97,7 +105,7 @@ export default {
 
 			try {
 				// Create note first
-				const noteResponse = await api.createNote(this.note.title, this.note.content)
+				const noteResponse = await api.createNote(this.note.title, this.note.content, this.note.isPublic)
 				const noteId = noteResponse.data.id
 
 				// Upload attachments if any
@@ -371,6 +379,34 @@ export default {
 
 .btn-remove:hover {
 	background: #ff5252;
+}
+
+.checkbox-label {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	cursor: pointer;
+	padding: 1rem;
+	background: #f8f9fa;
+	border-radius: 8px;
+	border: 2px solid #e0e0e0;
+	transition: all 0.3s;
+}
+
+.checkbox-label:hover {
+	border-color: #667eea;
+	background: #f0f4ff;
+}
+
+.checkbox-input {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.checkbox-text {
+	color: #333;
+	font-weight: 500;
 }
 
 @media (max-width: 768px) {

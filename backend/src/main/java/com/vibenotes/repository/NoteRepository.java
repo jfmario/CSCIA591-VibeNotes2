@@ -14,5 +14,7 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
 	Optional<Note> findByIdAndUserUsername(Long id, String username);
 
+	List<Note> findByUserUsernameAndIsPublicTrueOrderByUpdatedAtDesc(String username);
+
 }
 

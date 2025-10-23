@@ -8,7 +8,7 @@
 			<div v-else-if="error" class="error-message">{{ error }}</div>
 
 			<div v-else class="users-grid">
-				<div v-for="user in users" :key="user.id" class="user-card">
+				<div v-for="user in users" :key="user.id" class="user-card" @click="viewUserProfile(user)">
 					<div class="user-avatar">
 						<img v-if="user.avatarUrl" :src="getAvatarUrl(user.avatarUrl)" alt="Avatar" class="avatar-image" />
 						<div v-else class="avatar-placeholder">
@@ -80,6 +80,9 @@ export default {
 				return url
 			}
 			return 'http://localhost:8080' + url
+		},
+		viewUserProfile(user) {
+			this.$router.push(`/user/${user.id}/${user.username}`)
 		}
 	}
 }

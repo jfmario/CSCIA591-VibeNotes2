@@ -33,6 +33,9 @@ public class Note {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+	@Column(name = "is_public", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+	private Boolean isPublic = false;
+
 	public Note() {
 	}
 
@@ -93,10 +96,21 @@ public class Note {
 		this.updatedAt = updatedAt;
 	}
 
+	public Boolean getIsPublic() {
+		return isPublic != null ? isPublic : false;
+	}
+
+	public void setIsPublic(Boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		createdAt = LocalDateTime.now();
 		updatedAt = LocalDateTime.now();
+		if (isPublic == null) {
+			isPublic = false;
+		}
 	}
 
 	@PreUpdate
