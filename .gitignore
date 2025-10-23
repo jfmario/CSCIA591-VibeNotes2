@@ -43,3 +43,6 @@ logs/
 .env.local
 .env.*.local
 
+# Backend specific
+backend/.env
+

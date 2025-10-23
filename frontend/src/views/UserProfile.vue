@@ -115,7 +115,8 @@ export default {
 			if (url.startsWith('http')) {
 				return url
 			}
-			return 'http://localhost:8080' + url
+			const baseUrl = process.env.VUE_APP_API_URL || 'http://localhost:8080'
+			return baseUrl + url
 		}
 	}
 }

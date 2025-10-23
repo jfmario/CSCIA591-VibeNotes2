@@ -184,7 +184,8 @@ export default {
 				if (this.selectedFile) {
 					this.uploadProgress = 10
 					const uploadResponse = await api.uploadAvatar(this.selectedFile)
-					avatarUrl = 'http://localhost:8080' + uploadResponse.data.url
+					const baseUrl = process.env.VUE_APP_API_URL || 'http://localhost:8080'
+					avatarUrl = baseUrl + uploadResponse.data.url
 					this.uploadProgress = 100
 				}
 
@@ -215,7 +216,8 @@ export default {
 			if (url.startsWith('http')) {
 				return url
 			}
-			return 'http://localhost:8080' + url
+			const baseUrl = process.env.VUE_APP_API_URL || 'http://localhost:8080'
+			return baseUrl + url
 		},
 		formatDate(dateString) {
 			if (!dateString) return 'N/A'

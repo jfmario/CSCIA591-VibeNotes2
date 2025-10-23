@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8080/api'
+// Use environment variable or fallback to localhost for development
+const API_BASE_URL = process.env.VUE_APP_API_URL || 'http://localhost:8080'
+const API_URL = `${API_BASE_URL}/api`
 
 const api = axios.create({
 	baseURL: API_URL,
@@ -8,6 +10,9 @@ const api = axios.create({
 		'Content-Type': 'application/json'
 	}
 })
+
+// Export the base URL for use in other components
+export const BASE_URL = API_BASE_URL
 
 // Add token to requests if available
 api.interceptors.request.use(
