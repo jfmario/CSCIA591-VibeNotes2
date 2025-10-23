@@ -1,10 +1,13 @@
 package com.vibenotes.service;
 
+import com.vibenotes.dto.AttachmentResponse;
 import com.vibenotes.dto.CreateNoteRequest;
 import com.vibenotes.dto.NoteResponse;
 import com.vibenotes.dto.UpdateNoteRequest;
 import com.vibenotes.model.Note;
+import com.vibenotes.model.NoteAttachment;
 import com.vibenotes.model.User;
+import com.vibenotes.repository.NoteAttachmentRepository;
 import com.vibenotes.repository.NoteRepository;
 import com.vibenotes.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class NoteService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private NoteAttachmentRepository attachmentRepository;
 
 	public NoteResponse createNote(String username, CreateNoteRequest request) {
 		User user = userRepository.findByUsername(username)
@@ -70,13 +76,29 @@ public class NoteService {
 	}
 
 	private NoteResponse mapToNoteResponse(Note note) {
+		List<NoteAttachment> attachments = attachmentRepository.findByNoteId(note.getId());
+		List<AttachmentResponse> attachmentResponses = attachments.stream()
+				.map(this::mapToAttachmentResponse)
+				.collect(Collectors.toList());
+
 		return new NoteResponse(
 				note.getId(),
 				note.getTitle(),
 				note.getContent(),
 				note.getUser().getUsername(),
 				note.getCreatedAt(),
-				note.getUpdatedAt()
+				note.getUpdatedAt(),
+				attachmentResponses
+		);
+	}
+
+	private AttachmentResponse mapToAttachmentResponse(NoteAttachment attachment) {
+		return new AttachmentResponse(
+				attachment.getId(),
+				attachment.getOriginalFilename(),
+				attachment.getFileSize(),
+				attachment.getContentType(),
+				attachment.getUploadedAt()
 		);
 	}
 

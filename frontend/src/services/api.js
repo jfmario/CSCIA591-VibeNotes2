@@ -75,6 +75,25 @@ export default {
 	},
 	deleteNote(id) {
 		return api.delete(`/notes/${id}`)
+	},
+
+	// Note attachment endpoints
+	uploadNoteAttachment(noteId, file) {
+		const formData = new FormData()
+		formData.append('file', file)
+		return api.post(`/notes/${noteId}/attachments`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		})
+	},
+	downloadNoteAttachment(noteId, attachmentId) {
+		return api.get(`/notes/${noteId}/attachments/${attachmentId}`, {
+			responseType: 'blob'
+		})
+	},
+	deleteNoteAttachment(noteId, attachmentId) {
+		return api.delete(`/notes/${noteId}/attachments/${attachmentId}`)
 	}
 }
 

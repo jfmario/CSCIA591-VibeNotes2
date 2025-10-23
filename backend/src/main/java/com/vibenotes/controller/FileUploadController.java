@@ -20,11 +20,31 @@ public class FileUploadController {
 	@PostMapping("/avatar")
 	public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file) {
 		try {
-			String filename = fileStorageService.storeFile(file);
+			String filename = fileStorageService.storeAvatar(file);
 			String fileUrl = "/uploads/avatars/" + filename;
 
 			Map<String, String> response = new HashMap<>();
 			response.put("url", fileUrl);
+			response.put("message", "File uploaded successfully");
+
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			Map<String, String> error = new HashMap<>();
+			error.put("error", e.getMessage());
+			return ResponseEntity.badRequest().body(error);
+		}
+	}
+
+	@PostMapping("/attachment")
+	public ResponseEntity<?> uploadAttachment(@RequestParam("file") MultipartFile file) {
+		try {
+			String filename = fileStorageService.storeAttachment(file);
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("filename", filename);
+			response.put("originalFilename", file.getOriginalFilename());
+			response.put("fileSize", file.getSize());
+			response.put("contentType", file.getContentType());
 			response.put("message", "File uploaded successfully");
 
 			return ResponseEntity.ok(response);

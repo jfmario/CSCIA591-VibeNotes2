@@ -32,6 +32,32 @@
 						></textarea>
 					</div>
 
+					<div class="form-group">
+						<label>Attachments</label>
+						<div class="file-upload-section">
+							<input
+								type="file"
+								ref="fileInput"
+								@change="handleFileSelect"
+								multiple
+								class="file-input"
+							/>
+							<button @click="triggerFileInput" type="button" class="btn-choose-file">
+								📎 Choose Files
+							</button>
+							<span v-if="selectedFiles.length === 0" class="file-hint">
+								No files chosen (max 10MB per file)
+							</span>
+						</div>
+						<div v-if="selectedFiles.length > 0" class="selected-files">
+							<div v-for="(file, index) in selectedFiles" :key="index" class="file-item">
+								<span class="file-name">{{ file.name }}</span>
+								<span class="file-size">{{ formatFileSize(file.size) }}</span>
+								<button @click="removeFile(index)" type="button" class="btn-remove">×</button>
+							</div>
+						</div>
+					</div>
+
 					<div v-if="error" class="error-message">{{ error }}</div>
 
 					<div class="button-group">
@@ -59,6 +85,7 @@ export default {
 				title: '',
 				content: ''
 			},
+			selectedFiles: [],
 			saving: false,
 			error: ''
 		}
@@ -69,13 +96,52 @@ export default {
 			this.error = ''
 
 			try {
-				await api.createNote(this.note.title, this.note.content)
+				// Create note first
+				const noteResponse = await api.createNote(this.note.title, this.note.content)
+				const noteId = noteResponse.data.id
+
+				// Upload attachments if any
+				if (this.selectedFiles.length > 0) {
+					for (const file of this.selectedFiles) {
+						await api.uploadNoteAttachment(noteId, file)
+					}
+				}
+
 				this.$router.push('/notes')
 			} catch (error) {
 				this.error = error.response?.data?.message || 'Failed to create note'
 			} finally {
 				this.saving = false
 			}
+		},
+		triggerFileInput() {
+			this.$refs.fileInput.click()
+		},
+		handleFileSelect(event) {
+			const files = Array.from(event.target.files)
+			
+			for (const file of files) {
+				// Validate file size (10MB)
+				if (file.size > 10 * 1024 * 1024) {
+					this.error = `File ${file.name} is too large. Max size is 10MB.`
+					continue
+				}
+				
+				this.selectedFiles.push(file)
+			}
+			
+			// Clear input
+			event.target.value = ''
+		},
+		removeFile(index) {
+			this.selectedFiles.splice(index, 1)
+		},
+		formatFileSize(bytes) {
+			if (bytes === 0) return '0 B'
+			const k = 1024
+			const sizes = ['B', 'KB', 'MB', 'GB']
+			const i = Math.floor(Math.log(bytes) / Math.log(k))
+			return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
 		},
 		goBack() {
 			this.$router.push('/notes')
@@ -228,6 +294,83 @@ export default {
 
 .btn-cancel:hover {
 	background: #e0e0e0;
+}
+
+.file-upload-section {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.file-input {
+	display: none;
+}
+
+.btn-choose-file {
+	background: #667eea;
+	color: white;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	transition: background 0.3s;
+}
+
+.btn-choose-file:hover {
+	background: #5568d3;
+}
+
+.file-hint {
+	color: #999;
+	font-size: 0.9rem;
+}
+
+.selected-files {
+	margin-top: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.file-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.75rem;
+	background: #f5f5f5;
+	border-radius: 6px;
+}
+
+.file-name {
+	flex: 1;
+	color: #333;
+	font-weight: 500;
+}
+
+.file-size {
+	color: #666;
+	font-size: 0.85rem;
+}
+
+.btn-remove {
+	background: #ff6b6b;
+	color: white;
+	border: none;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 1.2rem;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.3s;
+}
+
+.btn-remove:hover {
+	background: #ff5252;
 }
 
 @media (max-width: 768px) {

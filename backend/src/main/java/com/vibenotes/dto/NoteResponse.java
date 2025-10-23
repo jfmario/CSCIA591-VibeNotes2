@@ -1,6 +1,7 @@
 package com.vibenotes.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class NoteResponse {
 
@@ -10,17 +11,19 @@ public class NoteResponse {
 	private String username;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	private List<AttachmentResponse> attachments;
 
 	public NoteResponse() {
 	}
 
-	public NoteResponse(Long id, String title, String content, String username, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	public NoteResponse(Long id, String title, String content, String username, LocalDateTime createdAt, LocalDateTime updatedAt, List<AttachmentResponse> attachments) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
 		this.username = username;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.attachments = attachments;
 	}
 
 	public Long getId() {
@@ -69,6 +72,14 @@ public class NoteResponse {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public List<AttachmentResponse> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<AttachmentResponse> attachments) {
+		this.attachments = attachments;
 	}
 
 }

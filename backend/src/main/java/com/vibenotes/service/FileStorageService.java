@@ -1,11 +1,14 @@
 package com.vibenotes.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,18 +18,23 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-	private final Path fileStorageLocation;
+	private final Path avatarStorageLocation;
+	private final Path attachmentStorageLocation;
 
-	public FileStorageService(@Value("${file.upload.dir}") String uploadDir) {
-		this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+	public FileStorageService(
+			@Value("${file.upload.avatar.dir}") String avatarUploadDir,
+			@Value("${file.upload.attachment.dir}") String attachmentUploadDir) {
+		this.avatarStorageLocation = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+		this.attachmentStorageLocation = Paths.get(attachmentUploadDir).toAbsolutePath().normalize();
 		try {
-			Files.createDirectories(this.fileStorageLocation);
+			Files.createDirectories(this.avatarStorageLocation);
+			Files.createDirectories(this.attachmentStorageLocation);
 		} catch (IOException ex) {
 			throw new RuntimeException("Could not create the directory where uploaded files will be stored.", ex);
 		}
 	}
 
-	public String storeFile(MultipartFile file) {
+	public String storeAvatar(MultipartFile file) {
 		// Validate file
 		if (file.isEmpty()) {
 			throw new RuntimeException("Failed to store empty file");
@@ -38,6 +46,19 @@ public class FileStorageService {
 			throw new RuntimeException("Only image files are allowed");
 		}
 
+		return storeFileInternal(file, avatarStorageLocation);
+	}
+
+	public String storeAttachment(MultipartFile file) {
+		// Validate file
+		if (file.isEmpty()) {
+			throw new RuntimeException("Failed to store empty file");
+		}
+
+		return storeFileInternal(file, attachmentStorageLocation);
+	}
+
+	private String storeFileInternal(MultipartFile file, Path storageLocation) {
 		// Generate unique filename
 		String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
 		String fileExtension = "";
@@ -53,7 +74,7 @@ public class FileStorageService {
 			}
 
 			// Copy file to the target location
-			Path targetLocation = this.fileStorageLocation.resolve(newFilename);
+			Path targetLocation = storageLocation.resolve(newFilename);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
 			return newFilename;
@@ -62,9 +83,32 @@ public class FileStorageService {
 		}
 	}
 
-	public void deleteFile(String filename) {
+	public Resource loadAttachment(String filename) {
 		try {
-			Path filePath = this.fileStorageLocation.resolve(filename).normalize();
+			Path filePath = attachmentStorageLocation.resolve(filename).normalize();
+			Resource resource = new UrlResource(filePath.toUri());
+			if (resource.exists()) {
+				return resource;
+			} else {
+				throw new RuntimeException("File not found: " + filename);
+			}
+		} catch (MalformedURLException ex) {
+			throw new RuntimeException("File not found: " + filename, ex);
+		}
+	}
+
+	public void deleteAvatar(String filename) {
+		try {
+			Path filePath = this.avatarStorageLocation.resolve(filename).normalize();
+			Files.deleteIfExists(filePath);
+		} catch (IOException ex) {
+			// Log but don't throw - file deletion is not critical
+		}
+	}
+
+	public void deleteAttachment(String filename) {
+		try {
+			Path filePath = this.attachmentStorageLocation.resolve(filename).normalize();
 			Files.deleteIfExists(filePath);
 		} catch (IOException ex) {
 			// Log but don't throw - file deletion is not critical

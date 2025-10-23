@@ -11,16 +11,19 @@ import java.nio.file.Paths;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-	@Value("${file.upload.dir}")
-	private String uploadDir;
+	@Value("${file.upload.avatar.dir}")
+	private String avatarUploadDir;
+
+	@Value("${file.upload.attachment.dir}")
+	private String attachmentUploadDir;
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-		String uploadPathString = uploadPath.toUri().toString();
+		Path avatarPath = Paths.get(avatarUploadDir).toAbsolutePath().normalize();
+		String avatarPathString = avatarPath.toUri().toString();
 
 		registry.addResourceHandler("/uploads/avatars/**")
-				.addResourceLocations(uploadPathString + "/");
+				.addResourceLocations(avatarPathString + "/");
 	}
 
 }

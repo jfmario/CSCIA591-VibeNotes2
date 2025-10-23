@@ -25,6 +25,26 @@
 						<span>Updated: {{ formatDate(note.updatedAt) }}</span>
 					</div>
 					<div class="note-content">{{ note.content }}</div>
+					
+					<div v-if="note.attachments && note.attachments.length > 0" class="attachments-section">
+						<h3 class="attachments-title">📎 Attachments ({{ note.attachments.length }})</h3>
+						<div class="attachments-list">
+							<div v-for="attachment in note.attachments" :key="attachment.id" class="attachment-item">
+								<div class="attachment-info">
+									<span class="attachment-name">{{ attachment.originalFilename }}</span>
+									<span class="attachment-size">{{ formatFileSize(attachment.fileSize) }}</span>
+								</div>
+								<div class="attachment-actions">
+									<button @click="downloadAttachment(attachment)" class="btn-download">
+										⬇️ Download
+									</button>
+									<button @click="deleteAttachment(attachment.id)" class="btn-delete-attachment">
+										🗑️
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<form v-else @submit.prevent="handleUpdate" class="note-form">
@@ -158,6 +178,43 @@ export default {
 				hour: '2-digit',
 				minute: '2-digit'
 			})
+		},
+		formatFileSize(bytes) {
+			if (bytes === 0) return '0 B'
+			const k = 1024
+			const sizes = ['B', 'KB', 'MB', 'GB']
+			const i = Math.floor(Math.log(bytes) / Math.log(k))
+			return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+		},
+		async downloadAttachment(attachment) {
+			try {
+				const response = await api.downloadNoteAttachment(this.$route.params.id, attachment.id)
+				
+				// Create blob and download
+				const url = window.URL.createObjectURL(new Blob([response.data]))
+				const link = document.createElement('a')
+				link.href = url
+				link.setAttribute('download', attachment.originalFilename)
+				document.body.appendChild(link)
+				link.click()
+				link.remove()
+				window.URL.revokeObjectURL(url)
+			} catch (error) {
+				this.error = 'Failed to download attachment'
+			}
+		},
+		async deleteAttachment(attachmentId) {
+			if (!confirm('Are you sure you want to delete this attachment?')) {
+				return
+			}
+
+			try {
+				await api.deleteNoteAttachment(this.$route.params.id, attachmentId)
+				// Reload note to refresh attachments list
+				await this.loadNote()
+			} catch (error) {
+				this.error = 'Failed to delete attachment'
+			}
 		}
 	}
 }
@@ -362,6 +419,86 @@ export default {
 
 .btn-cancel:hover {
 	background: #e0e0e0;
+}
+
+.attachments-section {
+	margin-top: 2rem;
+	padding-top: 2rem;
+	border-top: 2px solid #f0f0f0;
+}
+
+.attachments-title {
+	color: #333;
+	font-size: 1.3rem;
+	margin-bottom: 1rem;
+}
+
+.attachments-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.attachment-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem;
+	background: #f8f9fa;
+	border-radius: 8px;
+	border: 1px solid #e0e0e0;
+}
+
+.attachment-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	flex: 1;
+}
+
+.attachment-name {
+	color: #333;
+	font-weight: 500;
+}
+
+.attachment-size {
+	color: #666;
+	font-size: 0.85rem;
+}
+
+.attachment-actions {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.btn-download {
+	background: #667eea;
+	color: white;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	transition: background 0.3s;
+}
+
+.btn-download:hover {
+	background: #5568d3;
+}
+
+.btn-delete-attachment {
+	background: #ff6b6b;
+	color: white;
+	border: none;
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background 0.3s;
+}
+
+.btn-delete-attachment:hover {
+	background: #ff5252;
 }
 
 @media (max-width: 768px) {
