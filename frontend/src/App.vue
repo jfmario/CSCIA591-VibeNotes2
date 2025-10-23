@@ -4,6 +4,9 @@
 			<div class="nav-container">
 				<h1 class="logo">VibeNotes</h1>
 				<div class="nav-links">
+					<router-link to="/dashboard" class="nav-link">Dashboard</router-link>
+					<router-link to="/users" class="nav-link">Users</router-link>
+					<router-link to="/profile" class="nav-link">Profile</router-link>
 					<span class="username">{{ currentUser }}</span>
 					<button @click="logout" class="btn-logout">Logout</button>
 				</div>
@@ -75,12 +78,29 @@ body {
 .nav-links {
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: 1.5rem;
+}
+
+.nav-link {
+	color: #667eea;
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.3s;
+}
+
+.nav-link:hover {
+	color: #5568d3;
+}
+
+.nav-link.router-link-active {
+	color: #333;
+	font-weight: 600;
 }
 
 .username {
 	color: #333;
 	font-weight: 500;
+	margin-left: auto;
 }
 
 .btn-logout {

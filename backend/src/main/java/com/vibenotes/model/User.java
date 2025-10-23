@@ -29,14 +29,22 @@ public class User {
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
+	@Column(columnDefinition = "TEXT")
+	private String description;
+
+	@Column(name = "avatar_url")
+	private String avatarUrl;
+
 	public User() {
 	}
 
-	public User(Long id, String username, String password, LocalDateTime createdAt) {
+	public User(Long id, String username, String password, LocalDateTime createdAt, String description, String avatarUrl) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.createdAt = createdAt;
+		this.description = description;
+		this.avatarUrl = avatarUrl;
 	}
 
 	public Long getId() {
@@ -69,6 +77,22 @@ public class User {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
 	}
 
 	@PrePersist

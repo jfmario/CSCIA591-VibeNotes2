@@ -33,6 +33,31 @@ export default {
 	},
 	test() {
 		return api.get('/auth/test')
+	},
+
+	// User endpoints
+	getCurrentUserProfile() {
+		return api.get('/users/profile')
+	},
+	updateProfile(description, avatarUrl) {
+		return api.put('/users/profile', { description, avatarUrl })
+	},
+	getAllUsers() {
+		return api.get('/users')
+	},
+	getUserById(id) {
+		return api.get(`/users/${id}`)
+	},
+
+	// File upload endpoints
+	uploadAvatar(file) {
+		const formData = new FormData()
+		formData.append('file', file)
+		return api.post('/upload/avatar', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		})
 	}
 }
 
