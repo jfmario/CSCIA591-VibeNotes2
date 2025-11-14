@@ -61,11 +61,20 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers("/uploads/**").permitAll()
-						.requestMatchers("/api/public/**").authenticated()
+						.requestMatchers("/api/public/**").permitAll()
 						.requestMatchers("/api/upload/**").authenticated()
 						.requestMatchers("/api/users/**").authenticated()
 						.requestMatchers("/api/notes/**").authenticated()
 						.anyRequest().authenticated()
+				)
+				.headers(headers -> headers
+						.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"))
+						.frameOptions(frame -> frame.deny())
+						.xssProtection(xss -> xss.block())
+						.httpStrictTransportSecurity(hsts -> hsts
+								.maxAgeInSeconds(31536000)
+								.includeSubdomains(true)
+						)
 				)
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -83,7 +92,9 @@ public class SecurityConfig {
 		configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
 		
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("*"));
+		// Restrict allowed headers instead of using wildcard
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+		configuration.setExposedHeaders(Arrays.asList("Authorization"));
 		configuration.setAllowCredentials(true);
 		configuration.setMaxAge(3600L);
 		

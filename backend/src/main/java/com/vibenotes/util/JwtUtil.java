@@ -21,6 +21,9 @@ public class JwtUtil {
 	private Long expiration;
 
 	private SecretKey getSigningKey() {
+		if (secret == null || secret.length() < 64) {
+			throw new IllegalArgumentException("JWT secret must be at least 64 characters long");
+		}
 		return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 
@@ -48,11 +51,20 @@ public class JwtUtil {
 
 	public boolean validateToken(String token) {
 		try {
+			if (token == null || token.isEmpty()) {
+				return false;
+			}
 			Jwts.parserBuilder()
 					.setSigningKey(getSigningKey())
 					.build()
 					.parseClaimsJws(token);
 			return true;
+		} catch (io.jsonwebtoken.ExpiredJwtException e) {
+			return false;
+		} catch (io.jsonwebtoken.MalformedJwtException e) {
+			return false;
+		} catch (io.jsonwebtoken.security.SignatureException e) {
+			return false;
 		} catch (Exception e) {
 			return false;
 		}

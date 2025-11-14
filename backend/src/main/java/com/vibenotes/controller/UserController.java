@@ -3,6 +3,7 @@ package com.vibenotes.controller;
 import com.vibenotes.dto.UpdateProfileRequest;
 import com.vibenotes.dto.UserProfileResponse;
 import com.vibenotes.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,7 +28,7 @@ public class UserController {
 
 	@PutMapping("/profile")
 	public ResponseEntity<UserProfileResponse> updateProfile(
-			@RequestBody UpdateProfileRequest request,
+			@Valid @RequestBody UpdateProfileRequest request,
 			Authentication authentication) {
 		String username = authentication.getName();
 		UserProfileResponse profile = userService.updateProfile(username, request);

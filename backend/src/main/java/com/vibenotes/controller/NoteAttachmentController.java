@@ -1,6 +1,7 @@
 package com.vibenotes.controller;
 
 import com.vibenotes.dto.AttachmentResponse;
+import com.vibenotes.exception.ResourceNotFoundException;
 import com.vibenotes.model.Note;
 import com.vibenotes.model.NoteAttachment;
 import com.vibenotes.repository.NoteAttachmentRepository;
@@ -39,34 +40,30 @@ public class NoteAttachmentController {
 		
 		// Verify note belongs to user
 		Note note = noteRepository.findByIdAndUserUsername(noteId, username)
-				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
-		try {
-			// Store file
-			String filename = fileStorageService.storeAttachment(file);
+		// Store file
+		String filename = fileStorageService.storeAttachment(file);
 
-			// Create attachment record
-			NoteAttachment attachment = new NoteAttachment();
-			attachment.setFilename(filename);
-			attachment.setOriginalFilename(file.getOriginalFilename());
-			attachment.setFileSize(file.getSize());
-			attachment.setContentType(file.getContentType());
-			attachment.setNote(note);
+		// Create attachment record
+		NoteAttachment attachment = new NoteAttachment();
+		attachment.setFilename(filename);
+		attachment.setOriginalFilename(file.getOriginalFilename());
+		attachment.setFileSize(file.getSize());
+		attachment.setContentType(file.getContentType());
+		attachment.setNote(note);
 
-			NoteAttachment savedAttachment = attachmentRepository.save(attachment);
+		NoteAttachment savedAttachment = attachmentRepository.save(attachment);
 
-			AttachmentResponse response = new AttachmentResponse(
-					savedAttachment.getId(),
-					savedAttachment.getOriginalFilename(),
-					savedAttachment.getFileSize(),
-					savedAttachment.getContentType(),
-					savedAttachment.getUploadedAt()
-			);
+		AttachmentResponse response = new AttachmentResponse(
+				savedAttachment.getId(),
+				savedAttachment.getOriginalFilename(),
+				savedAttachment.getFileSize(),
+				savedAttachment.getContentType(),
+				savedAttachment.getUploadedAt()
+		);
 
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to upload attachment: " + e.getMessage());
-		}
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{attachmentId}")
@@ -79,14 +76,14 @@ public class NoteAttachmentController {
 		
 		// Verify note belongs to user
 		noteRepository.findByIdAndUserUsername(noteId, username)
-				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
 		NoteAttachment attachment = attachmentRepository.findById(attachmentId)
-				.orElseThrow(() -> new RuntimeException("Attachment not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Attachment not found"));
 
 		// Verify attachment belongs to note
 		if (!attachment.getNote().getId().equals(noteId)) {
-			throw new RuntimeException("Attachment does not belong to this note");
+			throw new ResourceNotFoundException("Attachment not found");
 		}
 
 		Resource resource = fileStorageService.loadAttachment(attachment.getFilename());
@@ -112,14 +109,14 @@ public class NoteAttachmentController {
 		
 		// Verify note belongs to user
 		noteRepository.findByIdAndUserUsername(noteId, username)
-				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
 		NoteAttachment attachment = attachmentRepository.findById(attachmentId)
-				.orElseThrow(() -> new RuntimeException("Attachment not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Attachment not found"));
 
 		// Verify attachment belongs to note
 		if (!attachment.getNote().getId().equals(noteId)) {
-			throw new RuntimeException("Attachment does not belong to this note");
+			throw new ResourceNotFoundException("Attachment not found");
 		}
 
 		// Delete file from storage

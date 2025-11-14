@@ -2,6 +2,7 @@ package com.vibenotes.service;
 
 import com.vibenotes.dto.UpdateProfileRequest;
 import com.vibenotes.dto.UserProfileResponse;
+import com.vibenotes.exception.ResourceNotFoundException;
 import com.vibenotes.model.User;
 import com.vibenotes.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class UserService {
 
 	public UserProfileResponse getUserById(Long id) {
 		User user = userRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		return mapToProfileResponse(user);
 	}
 

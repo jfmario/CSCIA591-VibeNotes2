@@ -3,6 +3,7 @@ package com.vibenotes.service;
 import com.vibenotes.dto.AuthResponse;
 import com.vibenotes.dto.LoginRequest;
 import com.vibenotes.dto.RegisterRequest;
+import com.vibenotes.exception.ResourceNotFoundException;
 import com.vibenotes.model.User;
 import com.vibenotes.repository.UserRepository;
 import com.vibenotes.util.JwtUtil;
@@ -31,7 +32,7 @@ public class AuthService {
 	public AuthResponse register(RegisterRequest request) {
 		// Check if username already exists
 		if (userRepository.existsByUsername(request.getUsername())) {
-			throw new RuntimeException("Username already exists");
+			throw new IllegalArgumentException("Username already exists");
 		}
 
 		// Create new user

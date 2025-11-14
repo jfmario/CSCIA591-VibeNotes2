@@ -7,6 +7,8 @@ import com.vibenotes.dto.UpdateNoteRequest;
 import com.vibenotes.model.Note;
 import com.vibenotes.model.NoteAttachment;
 import com.vibenotes.model.User;
+import com.vibenotes.exception.ResourceNotFoundException;
+import com.vibenotes.exception.UnauthorizedException;
 import com.vibenotes.repository.NoteAttachmentRepository;
 import com.vibenotes.repository.NoteRepository;
 import com.vibenotes.repository.UserRepository;
@@ -51,13 +53,13 @@ public class NoteService {
 
 	public NoteResponse getNoteById(String username, Long id) {
 		Note note = noteRepository.findByIdAndUserUsername(id, username)
-				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 		return mapToNoteResponse(note);
 	}
 
 	public NoteResponse updateNote(String username, Long id, UpdateNoteRequest request) {
 		Note note = noteRepository.findByIdAndUserUsername(id, username)
-				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 
 		if (request.getTitle() != null && !request.getTitle().isEmpty()) {
 			note.setTitle(request.getTitle());
@@ -75,7 +77,7 @@ public class NoteService {
 
 	public void deleteNote(String username, Long id) {
 		Note note = noteRepository.findByIdAndUserUsername(id, username)
-				.orElseThrow(() -> new RuntimeException("Note not found or access denied"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note not found"));
 		noteRepository.delete(note);
 	}
 
